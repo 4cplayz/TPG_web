@@ -6,7 +6,7 @@ app.get('/', (req, res) => { // Add 'req' parameter
   res.sendFile("C:/Users/tommy/OneDrive/Documents/Prog/WebSite/Web Developpement/TPG_web/public/index.html")
 })
 
-app.get('/', (req, res) => { // Add 'req' parameter
+app.get('/information', (req, res) => { // Add 'req' parameter
   res.sendFile("C:/Users/tommy/OneDrive/Documents/Prog/WebSite/Web Developpement/TPG_web/public/information.html")
 })
 
