@@ -1,22 +1,83 @@
 <!DOCTYPE html>
-<html>
-  <body style="background-color: blue;">
-    <div id="content-div">
-      <h1 style="color: aqua;">
-        Hello 
-      </h1>
-      <a href="/information">
-        This is a text project
-      </a>
-      <img src="image/Screenshot 2025-03-17 211317.png" alt="image" width="100" height="100">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Eye of the Sahara | Home</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="/" class="logo">Sahara Eye</a>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/information">Information</a></li>
+        </ul>
+      </nav>
     </div>
-    <div>
-      <button onclick="callAPI()">
-        <p>Call API</p>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <img src="image/Screenshot 2025-03-17 211317.png" alt="Eye of the Sahara" class="hero-image">
+    <div class="hero-content">
+      <h1 class="hero-title">The Eye of the Sahara</h1>
+      <p class="hero-description">Discover one of Earth's most mysterious geological formations, known as the Richat Structure - a circular marvel visible from space.</p>
+      <a href="/information" class="btn">Learn More</a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container">
+    <!-- Introduction Section -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">A Natural Wonder</h2>
+        <p class="section-subtitle">The Eye of the Sahara is a circular geologic feature in the Sahara desert that resembles a massive bullseye when viewed from space.</p>
+      </div>
+      
+      <div class="cards">
+        <div class="card">
+          <img src="/api/placeholder/400/200" alt="Eye of the Sahara aerial view" class="card-image">
+          <div class="card-content">
+            <h3 class="card-title">Geological Marvel</h3>
+            <p class="card-text">Located in Mauritania, this 40-kilometer wide structure was initially thought to be an impact crater but is now believed to be a deeply eroded dome.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <img src="/api/placeholder/400/200" alt="Desert landscape" class="card-image">
+          <div class="card-content">
+            <h3 class="card-title">Ancient Formation</h3>
+            <p class="card-text">Estimated to be between 485 and 400 million years old, this geological wonder has fascinated scientists and visitors alike for generations.</p>
+          </div>
+        </div>
+        
+        <div class="card">
+          <img src="/api/placeholder/400/200" alt="Satellite view" class="card-image">
+          <div class="card-content">
+            <h3 class="card-title">Visible From Space</h3>
+            <p class="card-text">So perfectly circular that it's easily visible from orbit, astronauts have used it as a landmark when passing over the Sahara desert.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- API Section -->
+    <section class="api-section">
+      <h3>Discover More Facts</h3>
+      <p>Click the button below to get an interesting fact about the Sahara Desert:</p>
+      
+      <button class="api-button" onclick="callAPI()">
+        Get Fact
       </button>
       
-      <div id="api-response" style="margin-top: 20px; padding: 15px; background-color: rgba(255, 255, 255, 0.8); border-radius: 5px; color: black;">
-        API response will appear here
+      <div id="api-response" class="api-response">
+        Facts will appear here
       </div>
       
       <script>
@@ -39,20 +100,68 @@
             const data = await response.json();
             console.log("API response:", data);
             
-            // Display the response in the div
+            // Since we're using placeholder data, we'll transform it into a fact
+            const facts = [
+              "The Sahara Desert is the largest hot desert in the world, covering over 9.2 million square kilometers.",
+              "The Eye of the Sahara is approximately 40 kilometers in diameter.",
+              "Despite being in the desert, the Richat Structure contains a variety of plant species due to its unique environment.",
+              "The structure was first discovered when astronauts spotted it from space during early missions.",
+              "Scientists believe the Eye was formed by the erosion of a geological dome.",
+              "The temperature in the Sahara can exceed 50°C (122°F) during the day."
+            ];
+            
+            // Use the todo ID to select a fact
+            const factIndex = (data.id - 1) % facts.length;
+            
+            // Display a fact in the div
             responseDiv.innerHTML = `
-              <h3>API Response:</h3>
-              <pre>${JSON.stringify(data, null, 2)}</pre>
+              <h4>Did You Know?</h4>
+              <p>${facts[factIndex]}</p>
+              <small>Fact #${factIndex + 1}</small>
             `;
           } catch (error) {
             console.error("Error calling API:", error);
             responseDiv.innerHTML = `
-              <h3>Error:</h3>
+              <h4>Error:</h4>
               <p>${error.message}</p>
             `;
           }
         }
       </script>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-container">
+        <div class="footer-column">
+          <h3>Sahara Eye</h3>
+          <p>Exploring the mysteries of one of Earth's most fascinating geological structures.</p>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/information">Information</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h3>Resources</h3>
+          <ul class="footer-links">
+            <li><a href="#">UNESCO World Heritage</a></li>
+            <li><a href="#">Geological Studies</a></li>
+            <li><a href="#">Travel Information</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="copyright">
+        <p>&copy; 2025 Sahara Eye Project. All rights reserved.</p>
+      </div>
     </div>
-  </body>
+  </footer>
+</body>
 </html>
