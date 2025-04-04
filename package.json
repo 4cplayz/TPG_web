@@ -1,7 +1,7 @@
 {
   "name": "tpg_web",
   "version": "1.0.0",
-  "type" : "module",
+  "type": "module",
   "description": "projet gestion de lab",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "mongoose": "^8.13.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
