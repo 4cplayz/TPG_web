@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import {route} from "./api_route.js"
 
 
 // Get the directory name in ESM
@@ -9,6 +10,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+app.use("/api", route);
 // Serve static files from the public directory using absolute paths
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -21,6 +23,10 @@ app.get('/information', (req, res) => {
   res.sendFile(path.join(__dirname, "public", "pages", "information.html"));
 });
 
+app.get('/apitest', (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "pages", "apitest.html"));
+});
+
 // This should be the LAST route - 404 handler
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
@@ -29,3 +35,6 @@ app.use((req, res) => {
 app.listen(3000, () => {
   console.log('Server running at http://localhost:3000/');
 });
+
+
+

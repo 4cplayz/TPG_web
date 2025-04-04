@@ -1,0 +1,68 @@
+<html>
+
+
+<head>
+
+<title>Équipement</title>
+
+</head>
+
+
+<body id="app">
+
+<h1>Équipements</h1>
+
+<ul>
+
+<li v-for="item in equipements" >
+
+<h3> {{item.nom}}</h3>
+
+<p> {{item.fabriquant}} </p>
+
+</li>
+
+
+</ul>
+
+<button @click="obtenirEquipements">rafraichir</button>
+
+
+</body>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script>
+
+const { createApp, ref } = Vue
+
+
+createApp({
+
+setup() {
+
+const equipements = ref([])
+
+
+async function obtenirEquipements() {
+
+const reponse = await fetch('/api/equipements', { method: 'GET' })
+
+const eqs = await reponse.json()
+
+equipements.value = eqs
+
+}
+
+return { equipements, obtenirEquipements }
+
+}
+
+}).mount('#app')
+
+
+</script>
+
+
+
+</html>
