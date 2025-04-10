@@ -1,5 +1,5 @@
 import express from 'express'
-import { mesEquipements, mesExemplaires } from './database.js'
+import { mesEquipements, mesExemplaires, mesFacts } from './database.js'
 
 export const routeAPI = express.Router()
 
@@ -39,8 +39,11 @@ routeAPI.delete('/equipements/:id', async (req, res) => {
   try {
     const id = req.params.id
     console.log("Deleting equipment with id:", id)
-    const equipToDelete = await mesEquipements.findOneById(id)
+
+    await mesEquipements.findOneById(id)
+
     await mesEquipements.deleteOne({ _id: id })
+
     res.send("Equipment was successfully deleted")
   }
   catch (err) {

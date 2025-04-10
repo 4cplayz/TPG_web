@@ -45,4 +45,5 @@ const factsSchema = new Schema(
 
 export const mesEquipements = database.model('Equipements',equipementSchema )
 export const mesExemplaires = database.model('Exemplaires',exemplaireSchema )
+
 export const mesFacts = database.model('Facts',factsSchema )
