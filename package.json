@@ -14,6 +14,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.18.2",
+    "local-nosql-db": "^0.6.2",
     "lowdb": "^7.0.1",
     "mongoose": "^8.13.2"
   },

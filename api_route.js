@@ -1,18 +1,15 @@
-import express from "express"
-import {db} from "./lowdb.js"
+import express from 'express'
+import { mesEquipements, mesExemplaires } from './database.js'
 
-export const route = express.Router()
+export const routeAPI = express.Router()
 
-
-route.get("/equipements", (req,res)=>{
-  db.read();
-  res.json(db.data.equipements);
-  console.log(200)
+routeAPI.get('/equipements',async (req,res)=>{
+  const equips = await mesEquipements.find({})
+  res.json(equips)
+  console.log("found equipements")
 })
 
-route.post("/equipements", (req,res)=>{
-  db.update(({ equipements }) => {
-    equipements.push(req.body);
-    console.log(200)
-  });
+routeAPI.get('/equipements/:id', (req,res)=>{
+const id = req.params.id
+
 })

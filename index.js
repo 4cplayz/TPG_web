@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import {route} from "./api_route.js"
+import {routeAPI} from "./api_route.js"
 
 
 // Get the directory name in ESM
@@ -9,8 +9,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.use(express.json());
 
-app.use("/api", route);
+app.use("/api", routeAPI);
 // Serve static files from the public directory using absolute paths
 app.use(express.static(path.join(__dirname, "public")));
 
