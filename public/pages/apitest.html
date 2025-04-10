@@ -1,68 +1,224 @@
-<html>
-
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-
-<title>Équipement</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Équipement</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+    
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+    
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 
-
 <body id="app">
+  <header>
+    <div class="container">
+      <nav>
+        <a href="/" class="logo">Sahara Eye</a>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/information">Information</a></li>
+          <li><a href="/apitest">Api Test</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-<h1>Équipements</h1>
+  <main class="container">
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Équipements API Test</h2>
+        <p class="section-subtitle">Test GET, POST, and DELETE requests to your API</p>
+      </div>
 
-<ul>
+      <!-- GET section -->
+      <div class="api-section">
+        <h3>GET - Fetch Équipements</h3>
+        <button class="api-button" @click="obtenirEquipements">Rafraîchir la liste</button>
+        
+        <div class="cards" style="margin-top: 20px;">
+          <div class="card" v-for="item in equipements">
+            <div class="card-content">
+              <h3 class="card-title">{{ item.nom }}</h3>
+              <p class="card-text">Fabriquant: {{ item.fabriquant }}</p>
+              <p class="card-text" style="font-size: 0.8rem;">ID: {{ item._id }}</p>
+              <div class="card-actions">
+                <button class="delete-btn" @click="supprimerEquipement(item._id)">
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<li v-for="item in equipements" >
+      <!-- POST section -->
+      <div class="api-section" style="margin-top: 30px;">
+        <h3>POST - Add New Équipement</h3>
+        
+        <div style="margin-bottom: 15px;">
+          <label for="nom" style="display: block; margin-bottom: 5px; font-weight: bold;">Nom:</label>
+          <input 
+            type="text" 
+            id="nom" 
+            v-model="nouveauNom" 
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          >
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <label for="fabriquant" style="display: block; margin-bottom: 5px; font-weight: bold;">Fabriquant:</label>
+          <input 
+            type="text" 
+            id="fabriquant" 
+            v-model="nouveauFabriquant"
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          >
+        </div>
+        
+        <button class="api-button" @click="ajouterEquipement">Ajouter</button>
+        
+        <div id="post-response" class="api-response" v-if="postResponse">
+          {{ postResponse }}
+        </div>
+      </div>
+      
+      <!-- DELETE response -->
+      <div class="api-section" style="margin-top: 30px;" v-if="deleteResponse">
+        <div id="delete-response" class="api-response">
+          {{ deleteResponse }}
+        </div>
+      </div>
+    </section>
+  </main>
 
-<h3> {{item.nom}}</h3>
-
-<p> {{item.fabriquant}} </p>
-
-</li>
-
-
-</ul>
-
-<button @click="obtenirEquipements">rafraichir</button>
-
-
+  <footer>
+    <div class="container">
+      <div class="copyright">
+        <p>&copy; 2025 API Test. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
 </body>
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
 <script>
-
 const { createApp, ref } = Vue
 
-
 createApp({
+  setup() {
+    const equipements = ref([])
+    const nouveauNom = ref('')
+    const nouveauFabriquant = ref('')
+    const postResponse = ref('')
+    const deleteResponse = ref('')
 
-setup() {
+    async function obtenirEquipements() {
+      try {
+        const reponse = await fetch('/api/equipements', { method: 'GET' })
+        const eqs = await reponse.json()
+        equipements.value = eqs
+      } catch (error) {
+        console.error('Error fetching equipements:', error)
+      }
+    }
 
-const equipements = ref([])
+    async function ajouterEquipement() {
+      if (!nouveauNom.value || !nouveauFabriquant.value) {
+        postResponse.value = 'Veuillez remplir tous les champs'
+        return
+      }
 
+      try {
+        postResponse.value = 'Envoi en cours...'
+        
+        const response = await fetch('/api/equipements', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            nom: nouveauNom.value,
+            fabriquant: nouveauFabriquant.value
+          })
+        })
 
-async function obtenirEquipements() {
+        const result = await response.text()
+        postResponse.value = result
+        
+        // Clear form fields after successful submission
+        nouveauNom.value = ''
+        nouveauFabriquant.value = ''
+        
+        // Refresh the list to show the new item
+        obtenirEquipements()
+      } catch (error) {
+        console.error('Error adding equipement:', error)
+        postResponse.value = 'Erreur: ' + error.message
+      }
+    }
+    
+    async function supprimerEquipement(id) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer cet équipement?')) {
+        return
+      }
+      
+      try {
+        deleteResponse.value = 'Suppression en cours...'
+        
+        const response = await fetch(`/api/equipements/${id}`, {
+          method: 'DELETE'
+        })
+        
+        const result = await response.text()
+        deleteResponse.value = result
+        
+        // Refresh the list to update after deletion
+        obtenirEquipements()
+        
+        // Clear the delete response after 3 seconds
+        setTimeout(() => {
+          deleteResponse.value = ''
+        }, 3000)
+      } catch (error) {
+        console.error('Error deleting equipement:', error)
+        deleteResponse.value = 'Erreur de suppression: ' + error.message
+      }
+    }
 
-const reponse = await fetch('/api/equipements', { method: 'GET' })
+    // Load equipements when page loads
+    obtenirEquipements()
 
-const eqs = await reponse.json()
-
-equipements.value = eqs
-
-}
-
-return { equipements, obtenirEquipements }
-
-}
-
+    return { 
+      equipements, 
+      nouveauNom, 
+      nouveauFabriquant, 
+      postResponse,
+      deleteResponse,
+      obtenirEquipements, 
+      ajouterEquipement,
+      supprimerEquipement
+    }
+  }
 }).mount('#app')
-
-
 </script>
-
-
-
 </html>

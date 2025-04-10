@@ -33,11 +33,16 @@ const exemplaireSchema = new Schema(
 "date": {type:Number,default:()=>{Date.now()}}
 
 }
+)
 
+const factsSchema = new Schema(
+  {
+    "description" : {type:String,required:true}
+  }
 )
 
 //Je crée les tables
 
 export const mesEquipements = database.model('Equipements',equipementSchema )
-
 export const mesExemplaires = database.model('Exemplaires',exemplaireSchema )
+export const mesFacts = database.model('Facts',factsSchema )

@@ -34,3 +34,17 @@ routeAPI.post('/equipements', async (req, res) => {
     res.json({})
   }
 })
+
+routeAPI.delete('/equipements/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    console.log("Deleting equipment with id:", id)
+    const equipToDelete = await mesEquipements.findOneById(id)
+    await mesEquipements.deleteOne({ _id: id })
+    res.send("Equipment was successfully deleted")
+  }
+  catch (err) {
+    console.log('erreur', err)
+    console.log("Deletion did not work")
+  }
+})
