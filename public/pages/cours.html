@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sahara Facts</title>
+  <title>Équipement</title>
   <link rel="stylesheet" href="/style.css">
   <style>
     .delete-btn {
@@ -46,25 +46,24 @@
   <main class="container">
     <section class="section">
       <div class="section-header">
-        <h2 class="section-title">Sahara Facts API</h2>
-        <p class="section-subtitle">Add, view, and delete interesting facts about the Sahara Desert</p>
-        <a href="/cours">Cours de gestion de Lab</a>
+        <h2 class="section-title">Équipements API Test</h2>
+        <p class="section-subtitle">Test GET, POST, and DELETE requests to your API</p>
       </div>
 
       <!-- GET section -->
       <div class="api-section">
-        <h3>GET - Fetch Facts</h3>
-        <button class="api-button" @click="obtenirFacts">Refresh List</button>
+        <h3>GET - Fetch Équipements</h3>
+        <button class="api-button" @click="obtenirEquipements">Rafraîchir la liste</button>
         
-        <div class="cards" style="margin-top: 20px; max-height: 500px; overflow-Y: auto;">
-          <div class="card" v-for="item in facts">
+        <div class="cards" style="margin-top: 20px;">
+          <div class="card" v-for="item in equipements">
             <div class="card-content">
-              <h3 class="card-title">Did You Know?</h3>
-              <p class="card-text">{{ item.description }}</p>
+              <h3 class="card-title">{{ item.nom }}</h3>
+              <p class="card-text">Fabriquant: {{ item.fabriquant }}</p>
               <p class="card-text" style="font-size: 0.8rem;">ID: {{ item._id }}</p>
               <div class="card-actions">
-                <button class="delete-btn" @click="supprimerFact(item._id)">
-                  Delete
+                <button class="delete-btn" @click="supprimerEquipement(item._id)">
+                  Supprimer
                 </button>
               </div>
             </div>
@@ -74,19 +73,29 @@
 
       <!-- POST section -->
       <div class="api-section" style="margin-top: 30px;">
-        <h3>POST - Add New Fact</h3>
+        <h3>POST - Add New Équipement</h3>
         
         <div style="margin-bottom: 15px;">
-          <label for="description" style="display: block; margin-bottom: 5px; font-weight: bold;">Fact Description:</label>
-          <textarea 
-            id="description" 
-            v-model="nouveauFact" 
-            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; min-height: 100px;"
-            placeholder="Enter an interesting fact about the Sahara Desert..."
-          ></textarea>
+          <label for="nom" style="display: block; margin-bottom: 5px; font-weight: bold;">Nom:</label>
+          <input 
+            type="text" 
+            id="nom" 
+            v-model="nouveauNom" 
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          >
         </div>
         
-        <button class="api-button" @click="ajouterFact">Add Fact</button>
+        <div style="margin-bottom: 15px;">
+          <label for="fabriquant" style="display: block; margin-bottom: 5px; font-weight: bold;">Fabriquant:</label>
+          <input 
+            type="text" 
+            id="fabriquant" 
+            v-model="nouveauFabriquant"
+            style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          >
+        </div>
+        
+        <button class="api-button" @click="ajouterEquipement">Ajouter</button>
         
         <div id="post-response" class="api-response" v-if="postResponse">
           {{ postResponse }}
@@ -105,7 +114,7 @@
   <footer>
     <div class="container">
       <div class="copyright">
-        <p>&copy; 2025 Sahara Eye Project. All rights reserved.</p>
+        <p>&copy; 2025 API Test. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -117,63 +126,66 @@ const { createApp, ref } = Vue
 
 createApp({
   setup() {
-    const facts = ref([])
-    const nouveauFact = ref('')
+    const equipements = ref([])
+    const nouveauNom = ref('')
+    const nouveauFabriquant = ref('')
     const postResponse = ref('')
     const deleteResponse = ref('')
 
-    async function obtenirFacts() {
+    async function obtenirEquipements() {
       try {
-        const reponse = await fetch('/api/facts', { method: 'GET' })
-        const factsData = await reponse.json()
-        facts.value = factsData
+        const reponse = await fetch('/api/equipements', { method: 'GET' })
+        const eqs = await reponse.json()
+        equipements.value = eqs
       } catch (error) {
-        console.error('Error fetching facts:', error)
+        console.error('Error fetching equipements:', error)
       }
     }
 
-    async function ajouterFact() {
-      if (!nouveauFact.value) {
-        postResponse.value = 'Please enter a fact description'
+    async function ajouterEquipement() {
+      if (!nouveauNom.value || !nouveauFabriquant.value) {
+        postResponse.value = 'Veuillez remplir tous les champs'
         return
       }
 
       try {
-        postResponse.value = 'Sending...'
+        postResponse.value = 'Envoi en cours...'
         
-        const response = await fetch('/api/facts', {
+        const response = await fetch('/api/equipements', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            description: nouveauFact.value
+            nom: nouveauNom.value,
+            fabriquant: nouveauFabriquant.value
           })
         })
 
         const result = await response.text()
         postResponse.value = result
         
-        // Clear form field after successful submission
-        nouveauFact.value = ''
+        // Clear form fields after successful submission
+        nouveauNom.value = ''
+        nouveauFabriquant.value = ''
         
         // Refresh the list to show the new item
-        obtenirFacts()
+        obtenirEquipements()
       } catch (error) {
-        console.error('Error adding fact:', error)
-        postResponse.value = 'Error: ' + error.message
+        console.error('Error adding equipement:', error)
+        postResponse.value = 'Erreur: ' + error.message
       }
     }
     
-    async function supprimerFact(id) {
-      if (!confirm('Are you sure you want to delete this fact?')) {
+    async function supprimerEquipement(id) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer cet équipement?')) {
         return
       }
       
       try {
-        deleteResponse.value = 'Deleting...'
+        deleteResponse.value = 'Suppression en cours...'
         
-        const response = await fetch(`/api/facts/${id}`, {
+        const response = await fetch(`/api/equipements/${id}`, {
           method: 'DELETE'
         })
         
@@ -181,29 +193,30 @@ createApp({
         deleteResponse.value = result
         
         // Refresh the list to update after deletion
-        obtenirFacts()
+        obtenirEquipements()
         
         // Clear the delete response after 3 seconds
         setTimeout(() => {
           deleteResponse.value = ''
         }, 3000)
       } catch (error) {
-        console.error('Error deleting fact:', error)
-        deleteResponse.value = 'Delete error: ' + error.message
+        console.error('Error deleting equipement:', error)
+        deleteResponse.value = 'Erreur de suppression: ' + error.message
       }
     }
 
-    // Load facts when page loads
-    obtenirFacts()
+    // Load equipements when page loads
+    obtenirEquipements()
 
     return { 
-      facts, 
-      nouveauFact, 
+      equipements, 
+      nouveauNom, 
+      nouveauFabriquant, 
       postResponse,
       deleteResponse,
-      obtenirFacts, 
-      ajouterFact,
-      supprimerFact
+      obtenirEquipements, 
+      ajouterEquipement,
+      supprimerEquipement
     }
   }
 }).mount('#app')

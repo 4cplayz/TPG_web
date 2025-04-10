@@ -24,6 +24,10 @@ app.get('/information', (req, res) => {
   res.sendFile(path.join(__dirname, "public", "pages", "information.html"));
 });
 
+app.get('/cours', (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "pages", "cours.html"));
+});
+
 app.get('/apitest', (req, res) => {
   res.sendFile(path.join(__dirname, "public", "pages", "apitest.html"));
 });
