@@ -70,27 +70,29 @@
       </div>
     </section>
 
-    <!-- API Section with Vue app -->
+    <!-- API Section with Vue app - MODIFIED to show one fact at a time -->
     <section id="facts-app" class="api-section">
-      <h3>Discover More Facts</h3>
-      <p>Click the button below to get interesting facts about the Sahara Desert:</p>
+      <h3>Discover Facts About the Sahara</h3>
+      <p>Click the button to cycle through interesting facts about the Sahara Desert:</p>
       
-      <button class="api-button" @click="obtenirFacts">
-        Get Facts
-      </button>
-      
-      <div id="api-response" class="api-response" v-if="facts.length === 0">
-        Facts will appear here
-      </div>
-      
-      <div class="cards" style="margin-top: 20px;" v-if="facts.length > 0">
-        <div class="card" v-for="item in facts" :key="item._id">
-          <div class="card-content">
-            <h3 class="card-title">Did You Know?</h3>
-            <p class="card-text">{{ item.description }}</p>
-          </div>
+      <div class="card" v-if="currentFact" style="margin-top: 20px;">
+        <div class="card-content">
+          <h3 class="card-title">Did You Know?</h3>
+          <p class="card-text">{{ currentFact.description }}</p>
         </div>
       </div>
+      
+      <div class="api-response" v-if="!currentFact && !loading">
+        No facts available at the moment.
+      </div>
+      
+      <div class="api-response" v-if="loading">
+        Loading...
+      </div>
+      
+      <button class="api-button" @click="nextFact" :disabled="loading" style="margin-top: 20px;">
+        Next Fact
+      </button>
     </section>
   </main>
 
@@ -127,31 +129,54 @@
     </div>
   </footer>
 
-  <!-- Vue script -->
+  <!-- Vue script - MODIFIED to cycle through facts -->
   <script>
     const { createApp, ref } = Vue
     
     createApp({
       setup() {
         const facts = ref([])
+        const currentFactIndex = ref(0)
+        const currentFact = ref(null)
+        const loading = ref(false)
         
-        async function obtenirFacts() {
+        async function fetchFacts() {
+          loading.value = true
           try {
-            const reponse = await fetch('/api/facts', { method: 'GET' })
-            const factsData = await reponse.json()
+            const response = await fetch('/api/facts', { method: 'GET' })
+            const factsData = await response.json()
             facts.value = factsData
+            
+            if (facts.value.length > 0) {
+              currentFact.value = facts.value[0]
+            }
+            
             console.log("Fetched facts:", factsData)
           } catch (error) {
             console.error('Error fetching facts:', error)
+          } finally {
+            loading.value = false
           }
         }
         
+        function nextFact() {
+          if (facts.value.length === 0) {
+            fetchFacts()
+            return
+          }
+          
+          // Move to the next fact in the array
+          currentFactIndex.value = (currentFactIndex.value + 1) % facts.value.length
+          currentFact.value = facts.value[currentFactIndex.value]
+        }
+        
         // Load facts when component is mounted
-        obtenirFacts()
+        fetchFacts()
         
         return {
-          facts,
-          obtenirFacts,
+          currentFact,
+          loading,
+          nextFact
         }
       }
     }).mount('#facts-app')
