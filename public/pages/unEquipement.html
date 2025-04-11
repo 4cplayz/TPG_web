@@ -10,9 +10,13 @@
     
     <div v-if="exemplaires.length">
         <ul>
-            <li v-for="exemplaire in exemplaires" :key="exemplaire._id">
-                {{exemplaire}}
-            </li>
+            <div v-for="exemplaire in exemplaires" style="display: flex; flex-direction: row;">
+                <div style="display: flex; flex-direction: columns; gap: 20px;">
+                    <p>Label : {{exemplaire.label}}</p>
+                    <p>Date : {{formatDate(exemplaire.date)}}</p>
+                </div>
+                <button @click="supprimerExemplaires(exemplaire._id)" style="margin-left: 20px;"> Supprimer </button>
+            </div>
         </ul>
     </div>
     <div v-else>
@@ -21,30 +25,64 @@
 
     <h3>POST - Add New Exemplaire</h3>
     <div style="margin-top: 20px;">
-        <label for="label" style="display: block; margin-bottom: 5px; font-weight: bold;">Labe:</label>
+        <label for="label" style="display: block; margin-bottom: 5px; font-weight: bold; ">Label:</label>
         <input 
           type="text" 
           id="label" 
           v-model="nouveaulabel" 
-          style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          style="width: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+          @input="validateInput"
         >
+        <p v-if="errorMessage" style="color: red; margin-top: 5px;">{{ errorMessage }}</p>
     </div>
 
-    <button  @click="ajouterExmplaires">Ajouter</button>
+    <button @click="ajouterExmplaires" :disabled="!isValidInput" :style="buttonStyle">Ajouter</button>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, computed } = Vue
         
         createApp({
             setup() {
                 const message = ref("Chargement des exemplaires...")
                 const exemplaires = ref([])
                 const nouveaulabel = ref('')
+                const errorMessage = ref('')
                 const postResponse = ref('')
                 const equipement_id = window.location.pathname.split("/").pop()
                 const urlPourRequete = "/api/equipements/" + equipement_id + "/exemplaires"
                 console.log(urlPourRequete)
+
+                const isValidInput = computed(() => {
+                    return nouveaulabel.value.trim() !== ''
+                })
+
+                const buttonStyle = computed(() => {
+                    return {
+                        backgroundColor: isValidInput.value ? '#4CAF50' : '#cccccc',
+                        color: 'white',
+                        padding: '10px 15px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: isValidInput.value ? 'pointer' : 'not-allowed',
+                        marginTop: '10px'
+                    }
+                })
+
+                function validateInput() {
+                    if (nouveaulabel.value.trim() === '') {
+                        errorMessage.value = 'Le label ne peut pas être vide'
+                    } else {
+                        errorMessage.value = ''
+                    }
+                }
+
+                function formatDate(timestamp) {
+                    if (!timestamp) return 'No date';
+                    const date = new Date(timestamp);
+                    // Format as: Day Month Year, Hour:Minute
+                    return date.toLocaleDateString() + ', ' + date.toLocaleTimeString();
+                }
 
                 async function obtenirExemplaires() {
                     try {
@@ -60,6 +98,10 @@
                 }
 
                 async function ajouterExmplaires() {
+                    if (!isValidInput.value) {
+                        errorMessage.value = "Veuillez remplir le champ label"
+                        return
+                    }
                     try {
                         postResponse.value = 'Envoi en cours...'
 
@@ -69,8 +111,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                label: nouveaulabel.value,
-                                equipement: equipement_id
+                                label: nouveaulabel.value
                             })
                         })
                         
@@ -78,12 +119,27 @@
                         postResponse.value = result
 
                         nouveaulabel.value = ''
+                        errorMessage.value = ''
 
                         obtenirExemplaires()
                     }
                     catch (error) {
-                        console.error('Error adding equipement:', error)
+                        console.error('Error adding exemplaires:', error)
                         postResponse.value = 'Erreur: ' + error.message
+                    }
+                }
+
+                async function supprimerExemplaires(id) {
+                    try {
+                        const response = await fetch(`/api/exemplaires/${id}`, {
+                            method: 'DELETE'
+                        })
+
+                        obtenirExemplaires()
+
+                    }
+                    catch (error) {
+                        console.error('Error deleting exemplaires:', error)
                     }
                 }
 
@@ -97,8 +153,13 @@
                     obtenirExemplaires,
                     ajouterExmplaires,
                     nouveaulabel,
-                    postResponse
-                    
+                    postResponse,
+                    supprimerExemplaires,
+                    formatDate,
+                    isValidInput,
+                    buttonStyle,
+                    errorMessage,
+                    validateInput
                 }
             }
         }).mount('#app')

@@ -58,7 +58,7 @@ routeAPI.get('/equipements/:id/exemplaires', async (req, res) => {
     await mesEquipements.findOneById(id) // Vérifier que l'équipement existe
 
     // Chercher tous les exemplaires qui ont cet ID d'équipement
-    const exemplaires = await mesExemplaires.find({ id: id })
+    const exemplaires = await mesExemplaires.find({ equipement: id })
     res.json(exemplaires)
     console.log(`Found ${exemplaires.length} exemplaires for equipment ${id}`)
   }
@@ -75,7 +75,9 @@ routeAPI.post('/equipements/:id/exemplaires',async (req, res) => {
     await mesEquipements.findOneById(id)
     const body = req.body
 
-    body.id = id
+    body.equipement = id
+
+    console.log("Creating exemplaire with:", body)
     await mesExemplaires.create(body)
     res.send("Nouvel exemplaire créé avec succès")
   }
@@ -111,8 +113,7 @@ routeAPI.delete('/exemplaires/:id', async (req, res) => {
   try {
     const id = req.params.id
     console.log("Deleting exemplaire with id:", id)
-    await mesExemplaires.findOneById(id)
-    await mesExemplaires.deleteOne({ _id: id })
+    await mesExemplaires.deleteOne(id)
     res.send("Exemplaire was successfully deleted")
   }
   catch (err) {
