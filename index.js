@@ -32,6 +32,12 @@ app.get('/apitest', (req, res) => {
   res.sendFile(path.join(__dirname, "public", "pages", "apitest.html"));
 });
 
+app.get('/equipement', (req, res) => {
+
+  res.sendFile(path.join(basePath, 'equipement.html'))
+  
+  })
+
 // This should be the LAST route - 404 handler
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "public", "404.html"));

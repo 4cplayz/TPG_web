@@ -3,6 +3,8 @@ import { mesEquipements, mesExemplaires, mesFacts } from './database.js'
 
 export const routeAPI = express.Router()
 
+// equipements section //
+
 routeAPI.get('/equipements',async (req,res)=>{
   const equips = await mesEquipements.find({})
   res.json(equips)
@@ -39,11 +41,8 @@ routeAPI.delete('/equipements/:id', async (req, res) => {
   try {
     const id = req.params.id
     console.log("Deleting equipment with id:", id)
-
     await mesEquipements.findOneById(id)
-
     await mesEquipements.deleteOne({ _id: id })
-
     res.send("Equipment was successfully deleted")
   }
   catch (err) {
@@ -51,6 +50,80 @@ routeAPI.delete('/equipements/:id', async (req, res) => {
     console.log("Deletion did not work")
   }
 })
+
+// mixed section //
+routeAPI.get('/equipements/:id/exemplaires',async (req, res) => {
+  const id = req.params.id
+  try {
+    await mesEquipements.findOneById(id)
+
+    const exempl = await mesExemplaires.findOneById(id)
+    res.json(exempl)
+    console.log("Exemplaires ID", exempl)
+  }
+  catch (err) {
+    console.log('erreur',err)
+    res.json({})
+  }
+})
+
+
+routeAPI.post('/equipements/:id/exemplaires',async (req, res) => {
+  const id = req.params.id
+  try {
+    await mesEquipements.findOneById(id)
+    const body = req.body
+
+    body.id = id
+    await mesExemplaires.create(id)
+
+
+  }
+  catch (err) {
+    console.log('erreur',err)
+    res.json({})
+  }
+})
+
+
+
+
+//exemplaire section //
+routeAPI.get('/exemplaires',async (req,res)=>{
+  const exempl = await mesExemplaires.find({})
+  res.json(exempl)
+  console.log("found exemplaires")
+})
+
+routeAPI.get('/exemplaires/:id',async (req, res) => {
+  const id = req.params.id
+  try {
+    const exempl = await mesExemplaires.findOneById(id)
+    res.json(exempl)
+  }
+  catch (err) {
+    console.log('erreur',err)
+    res.json({})
+  }
+})
+
+routeAPI.delete('/exemplaires/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    console.log("Deleting exemplaire with id:", id)
+    await mesExemplaires.findOneById(id)
+    await mesExemplaires.deleteOne({ _id: id })
+    res.send("Exemplaire was successfully deleted")
+  }
+  catch (err) {
+    console.log('erreur', err)
+    console.log("Deletion did not work")
+  }
+})
+
+
+
+// Extra code for fun //
 
 routeAPI.get('/facts', async (req, res) => {
   try {
