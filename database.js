@@ -30,7 +30,7 @@ const exemplaireSchema = new Schema(
 
 "equipement": {type:database.Types.ObjectId, ref:"Equipements", required:true},
 
-"date": {type:Number,default:()=>{Date.now()}}
+"date": {type:Number,default:()=> Date.now()}
 
 }
 )
