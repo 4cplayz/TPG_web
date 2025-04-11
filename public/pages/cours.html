@@ -65,6 +65,9 @@
                 <button class="delete-btn" @click="supprimerEquipement(item._id)">
                   Supprimer
                 </button>
+                <a class="delete-btn" style="margin-left: 20px ;" :href="'/equipements/' + item._id">
+                  Visite item
+                </a>
               </div>
             </div>
           </div>

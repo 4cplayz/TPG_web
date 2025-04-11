@@ -29,7 +29,7 @@ const exemplaireSchema = new Schema(
 {
 
 "equipement": {type:database.Types.ObjectId, ref:"Equipements", required:true},
-
+"label": {type:String,required:true},
 "date": {type:Number,default:()=> Date.now()}
 
 }

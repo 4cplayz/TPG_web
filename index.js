@@ -33,7 +33,8 @@ app.get('/apitest', (req, res) => {
 });
 
 app.get('/equipements/:id', (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "pages", 'unEquipement.html'))
+  const filePath = path.join(__dirname, "public", "pages", 'unEquipement.html');
+  res.sendFile(filePath);
 })
 
 // This should be the LAST route - 404 handler

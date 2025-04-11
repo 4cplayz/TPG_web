@@ -52,18 +52,19 @@ routeAPI.delete('/equipements/:id', async (req, res) => {
 })
 
 // mixed section //
-routeAPI.get('/equipements/:id/exemplaires',async (req, res) => {
+routeAPI.get('/equipements/:id/exemplaires', async (req, res) => {
   const id = req.params.id
   try {
-    await mesEquipements.findOneById(id)
+    await mesEquipements.findOneById(id) // Vérifier que l'équipement existe
 
-    const exempl = await mesExemplaires.findOneById(id)
-    res.json(exempl)
-    console.log("Exemplaires ID", exempl)
+    // Chercher tous les exemplaires qui ont cet ID d'équipement
+    const exemplaires = await mesExemplaires.find({ id: id })
+    res.json(exemplaires)
+    console.log(`Found ${exemplaires.length} exemplaires for equipment ${id}`)
   }
   catch (err) {
-    console.log('erreur',err)
-    res.json({})
+    console.log('erreur', err)
+    res.json([]) // Retourner un tableau vide en cas d'erreur
   }
 })
 
@@ -75,9 +76,8 @@ routeAPI.post('/equipements/:id/exemplaires',async (req, res) => {
     const body = req.body
 
     body.id = id
-    await mesExemplaires.create(id)
-
-
+    await mesExemplaires.create(body)
+    res.send("Nouvel exemplaire créé avec succès")
   }
   catch (err) {
     console.log('erreur',err)
